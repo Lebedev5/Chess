@@ -22,6 +22,174 @@ const canvas = document.getElementById("canvas") || document.getElementsByTagNam
 if (ctx){
 	canvas.setAttribute("width", parseInt(getComputedStyle(canvas).width));
 	canvas.setAttribute("height", parseInt(getComputedStyle(canvas).height));
+
+	function detectRook(){
+			if (this.coords.y > 0){
+				for (let i = this.coords.y - 1; i >= 0; --i){
+					if (board.tiles[this.coords.x][i].status != "friend"){
+						let status = board.tiles[this.coords.x][i].status;
+						ctx.fillStyle = (status == "empty") ? "rgba(50, 200, 50, 0.4)" : "rgba(200, 50, 50, 0.4)";
+						ctx.fillRect(board.tiles[this.coords.x][i].x, 
+									   board.tiles[this.coords.x][i].y, 
+									   board.tiles[this.coords.x][i].width, 
+									   board.tiles[this.coords.x][i].height);
+						if (board.tiles[this.coords.x][i].status == "empty"){
+							board.targets.push({x: this.coords.x, y: i})
+						} else {
+							board.killTargets.push({x: this.coords.x, y: i});
+							break;
+						}
+					} else {
+						break;
+					}
+				}
+			}
+			if (this.coords.y < 8){
+				for (let i = this.coords.y + 1; i < 8; ++i){
+					if (board.tiles[this.coords.x][i].status != "friend"){
+						let status = board.tiles[this.coords.x][i].status;
+						ctx.fillStyle = (status == "empty") ? "rgba(50, 200, 50, 0.4)" : "rgba(200, 50, 50, 0.4)";
+						ctx.fillRect(board.tiles[this.coords.x][i].x, 
+									   board.tiles[this.coords.x][i].y, 
+									   board.tiles[this.coords.x][i].width, 
+									   board.tiles[this.coords.x][i].height);
+						if (board.tiles[this.coords.x][i].status == "empty"){
+							board.targets.push({x: this.coords.x, y: i})
+						} else {
+							board.killTargets.push({x: this.coords.x, y: i});
+							break;
+						}
+					} else {
+						break;
+					}
+				}
+			}
+			if (this.coords.x < 8){
+				for (let i = this.coords.x + 1; i < 8; ++i){
+					if (board.tiles[i][this.coords.y].status != "friend"){
+						let status = board.tiles[i][this.coords.y].status;
+						ctx.fillStyle = (status == "empty") ? "rgba(50, 200, 50, 0.4)" : "rgba(200, 50, 50, 0.4)";
+						ctx.fillRect(board.tiles[i][this.coords.y].x, 
+									   board.tiles[i][this.coords.y].y, 
+									   board.tiles[i][this.coords.y].width, 
+									   board.tiles[i][this.coords.y].height);
+						if (board.tiles[i][this.coords.y].status == "empty"){
+							board.targets.push({x: i, y: this.coords.y})
+						} else {
+							board.killTargets.push({x: i, y: this.coords.y});
+							break;
+						}
+					} else {
+						break;
+					}
+				}
+			}
+			if (this.coords.x >= 0){
+				for (let i = this.coords.x - 1; i >= 0; --i){
+					if (board.tiles[i][this.coords.y].status != "friend"){
+						let status = board.tiles[i][this.coords.y].status;
+						ctx.fillStyle = (status == "empty") ? "rgba(50, 200, 50, 0.4)" : "rgba(200, 50, 50, 0.4)";
+						ctx.fillRect(board.tiles[i][this.coords.y].x, 
+									   board.tiles[i][this.coords.y].y, 
+									   board.tiles[i][this.coords.y].width, 
+									   board.tiles[i][this.coords.y].height);
+						if (board.tiles[i][this.coords.y].status == "empty"){
+							board.targets.push({x: i, y: this.coords.y})
+						} else {
+							board.killTargets.push({x: i, y: this.coords.y});
+							break;
+						}
+					} else {
+						break;
+					}
+				}
+			}
+		}
+
+
+
+	function detectBishop(){
+			for (let i = this.coords.x - 1, j = this.coords.y - 1; j >= 0 && i >= 0; --i, --j){
+				if (board.tiles[i][j].status != "friend"){
+					ctx.fillStyle = board.tiles[i][j].status == "empty" ? "rgba(50, 200, 50, 0.4)":"rgba(200, 50, 50, 0.4)";
+
+					ctx.fillRect(board.tiles[i][j].x, 
+								 board.tiles[i][j].y, 
+								 board.tiles[i][j].width, 
+								 board.tiles[i][j].height);
+
+					if (board.tiles[i][j].status == "empty"){
+						board.targets.push({x: i, y: j})
+					} else {
+						board.killTargets.push({x: i, y: j});
+						break;
+					}
+
+				} else {
+					break;
+				}
+			}
+			for (let i = this.coords.x + 1, j = this.coords.y - 1; j >= 0 && i < 8; ++i, --j){
+				if (board.tiles[i][j].status != "friend"){
+					ctx.fillStyle = board.tiles[i][j].status == "empty" ? "rgba(50, 200, 50, 0.4)":"rgba(200, 50, 50, 0.4)";
+
+					ctx.fillRect(board.tiles[i][j].x, 
+								 board.tiles[i][j].y, 
+								 board.tiles[i][j].width, 
+								 board.tiles[i][j].height);
+
+					if (board.tiles[i][j].status == "empty"){
+						board.targets.push({x: i, y: j})
+					} else {
+						board.killTargets.push({x: i, y: j});
+						break;
+					}
+
+				} else {
+					break;
+				}
+			}
+			for (let i = this.coords.x + 1, j = this.coords.y + 1; j < 8 && i < 8; ++i, ++j){
+				if (board.tiles[i][j].status != "friend"){
+					ctx.fillStyle = board.tiles[i][j].status == "empty" ? "rgba(50, 200, 50, 0.4)":"rgba(200, 50, 50, 0.4)";
+
+					ctx.fillRect(board.tiles[i][j].x, 
+								 board.tiles[i][j].y, 
+								 board.tiles[i][j].width, 
+								 board.tiles[i][j].height);
+
+					if (board.tiles[i][j].status == "empty"){
+						board.targets.push({x: i, y: j})
+					} else {
+						board.killTargets.push({x: i, y: j});
+						break;
+					}
+
+				} else {
+					break;
+				}
+			}
+			for (let i = this.coords.x - 1, j = this.coords.y + 1; j < 8 && i >= 0; --i, ++j){
+				if (board.tiles[i][j].status != "friend"){
+					ctx.fillStyle = board.tiles[i][j].status == "empty" ? "rgba(50, 200, 50, 0.4)":"rgba(200, 50, 50, 0.4)";
+
+					ctx.fillRect(board.tiles[i][j].x, 
+								 board.tiles[i][j].y, 
+								 board.tiles[i][j].width, 
+								 board.tiles[i][j].height);
+
+					if (board.tiles[i][j].status == "empty"){
+						board.targets.push({x: i, y: j})
+					} else {
+						board.killTargets.push({x: i, y: j});
+						break;
+					}
+
+				} else {
+					break;
+				}
+			}
+		}
 	/*объект, который хранит данные ширины высоты и координаты объекта*/
 	function Tile(x, y, width, height, color){
 		this.x = x || 0;
@@ -147,88 +315,7 @@ if (ctx){
 
 	function Rook(width, height, source, coords, board){
 		Figure.call(this, width, height, source, coords, board);
-		this.detect = function(){
-			if (this.coords.y > 0){
-				for (let i = this.coords.y - 1; i >= 0; --i){
-					if (board.tiles[this.coords.x][i].status != "friend"){
-						let status = board.tiles[this.coords.x][i].status;
-						ctx.fillStyle = (status == "empty") ? "rgba(50, 200, 50, 0.4)" : "rgba(200, 50, 50, 0.4)";
-						ctx.fillRect(board.tiles[this.coords.x][i].x, 
-									   board.tiles[this.coords.x][i].y, 
-									   board.tiles[this.coords.x][i].width, 
-									   board.tiles[this.coords.x][i].height);
-						if (board.tiles[this.coords.x][i].status == "empty"){
-							board.targets.push({x: this.coords.x, y: i})
-						} else {
-							board.killTargets.push({x: this.coords.x, y: i});
-							break;
-						}
-					} else {
-						break;
-					}
-				}
-			}
-			if (this.coords.y < 8){
-				for (let i = this.coords.y + 1; i < 8; ++i){
-					if (board.tiles[this.coords.x][i].status != "friend"){
-						let status = board.tiles[this.coords.x][i].status;
-						ctx.fillStyle = (status == "empty") ? "rgba(50, 200, 50, 0.4)" : "rgba(200, 50, 50, 0.4)";
-						ctx.fillRect(board.tiles[this.coords.x][i].x, 
-									   board.tiles[this.coords.x][i].y, 
-									   board.tiles[this.coords.x][i].width, 
-									   board.tiles[this.coords.x][i].height);
-						if (board.tiles[this.coords.x][i].status == "empty"){
-							board.targets.push({x: this.coords.x, y: i})
-						} else {
-							board.killTargets.push({x: this.coords.x, y: i});
-							break;
-						}
-					} else {
-						break;
-					}
-				}
-			}
-			if (this.coords.x < 8){
-				for (let i = this.coords.x + 1; i < 8; ++i){
-					if (board.tiles[i][this.coords.y].status != "friend"){
-						let status = board.tiles[i][this.coords.y].status;
-						ctx.fillStyle = (status == "empty") ? "rgba(50, 200, 50, 0.4)" : "rgba(200, 50, 50, 0.4)";
-						ctx.fillRect(board.tiles[i][this.coords.y].x, 
-									   board.tiles[i][this.coords.y].y, 
-									   board.tiles[i][this.coords.y].width, 
-									   board.tiles[i][this.coords.y].height);
-						if (board.tiles[i][this.coords.y].status == "empty"){
-							board.targets.push({x: i, y: this.coords.y})
-						} else {
-							board.killTargets.push({x: i, y: this.coords.y});
-							break;
-						}
-					} else {
-						break;
-					}
-				}
-			}
-			if (this.coords.x >= 0){
-				for (let i = this.coords.x - 1; i >= 0; --i){
-					if (board.tiles[i][this.coords.y].status != "friend"){
-						let status = board.tiles[i][this.coords.y].status;
-						ctx.fillStyle = (status == "empty") ? "rgba(50, 200, 50, 0.4)" : "rgba(200, 50, 50, 0.4)";
-						ctx.fillRect(board.tiles[i][this.coords.y].x, 
-									   board.tiles[i][this.coords.y].y, 
-									   board.tiles[i][this.coords.y].width, 
-									   board.tiles[i][this.coords.y].height);
-						if (board.tiles[i][this.coords.y].status == "empty"){
-							board.targets.push({x: i, y: this.coords.y})
-						} else {
-							board.killTargets.push({x: i, y: this.coords.y});
-							break;
-						}
-					} else {
-						break;
-					}
-				}
-			}
-		}
+		this.detect = detectRook;
 	}
 
 	function Knight(width, height, source, coords, board){
@@ -351,96 +438,15 @@ if (ctx){
 
 	function Bishop(width, height, source, coords, board){
 		Figure.call(this, width, height, source, coords, board);
-		this.detect = function(){
-			for (let i = this.coords.x - 1, j = this.coords.y - 1; j >= 0 && i >= 0; --i, --j){
-				if (board.tiles[i][j].status != "friend"){
-					ctx.fillStyle = board.tiles[i][j].status == "empty" ? "rgba(50, 200, 50, 0.4)":"rgba(200, 50, 50, 0.4)";
-
-					ctx.fillRect(board.tiles[i][j].x, 
-								 board.tiles[i][j].y, 
-								 board.tiles[i][j].width, 
-								 board.tiles[i][j].height);
-
-					if (board.tiles[i][j].status == "empty"){
-						board.targets.push({x: i, y: j})
-					} else {
-						board.killTargets.push({x: i, y: j});
-						break;
-					}
-
-				} else {
-					break;
-				}
-			}
-			for (let i = this.coords.x + 1, j = this.coords.y - 1; j >= 0 && i < 8; ++i, --j){
-				if (board.tiles[i][j].status != "friend"){
-					ctx.fillStyle = board.tiles[i][j].status == "empty" ? "rgba(50, 200, 50, 0.4)":"rgba(200, 50, 50, 0.4)";
-
-					ctx.fillRect(board.tiles[i][j].x, 
-								 board.tiles[i][j].y, 
-								 board.tiles[i][j].width, 
-								 board.tiles[i][j].height);
-
-					if (board.tiles[i][j].status == "empty"){
-						board.targets.push({x: i, y: j})
-					} else {
-						board.killTargets.push({x: i, y: j});
-						break;
-					}
-
-				} else {
-					break;
-				}
-			}
-			for (let i = this.coords.x + 1, j = this.coords.y + 1; j < 8 && i < 8; ++i, ++j){
-				if (board.tiles[i][j].status != "friend"){
-					ctx.fillStyle = board.tiles[i][j].status == "empty" ? "rgba(50, 200, 50, 0.4)":"rgba(200, 50, 50, 0.4)";
-
-					ctx.fillRect(board.tiles[i][j].x, 
-								 board.tiles[i][j].y, 
-								 board.tiles[i][j].width, 
-								 board.tiles[i][j].height);
-
-					if (board.tiles[i][j].status == "empty"){
-						board.targets.push({x: i, y: j})
-					} else {
-						board.killTargets.push({x: i, y: j});
-						break;
-					}
-
-				} else {
-					break;
-				}
-			}
-			for (let i = this.coords.x - 1, j = this.coords.y + 1; j < 8 && i >= 0; --i, ++j){
-				if (board.tiles[i][j].status != "friend"){
-					ctx.fillStyle = board.tiles[i][j].status == "empty" ? "rgba(50, 200, 50, 0.4)":"rgba(200, 50, 50, 0.4)";
-
-					ctx.fillRect(board.tiles[i][j].x, 
-								 board.tiles[i][j].y, 
-								 board.tiles[i][j].width, 
-								 board.tiles[i][j].height);
-
-					if (board.tiles[i][j].status == "empty"){
-						board.targets.push({x: i, y: j})
-					} else {
-						board.killTargets.push({x: i, y: j});
-						break;
-					}
-
-				} else {
-					break;
-				}
-			}
-		}
+		this.detect = detectBishop;
 	}
 	
 
 	function Queen(width, height, source, coords, board){
 		Figure.call(this, width, height, source, coords, board);
 		this.detect = function(){
-			(new Rook(null, null, null, {x: this.coords.x, y: this.coords.y}, board, false)).detect.call(this);
-			(new Bishop(null, null, null, {x: this.coords.x, y: this.coords.y}, board, false)).detect.call(this);
+			detectRook.call(this);
+			detectBishop.call(this);
 		}
 	}
 	function preloader(){
