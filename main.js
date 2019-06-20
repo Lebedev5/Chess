@@ -55,7 +55,8 @@ canvas.addEventListener("click", function(ev){
 			}
 			for (let i = 0; i < board.killTargets.length; ++i){
 				if (board.killTargets[i].x == cursorCoords.x && board.killTargets[i].y == cursorCoords.y){
-					board.focus.destroy({x: cursorCoords.x, y: cursorCoords.y});
+					destroyFigure(board.tiles[cursorCoords.x][cursorCoords.y].figure, player.collection, enemy.collection);
+					board.focus.force({x: cursorCoords.x, y: cursorCoords.y});
 					board.reverse();
 					player.draw();
 					enemy.draw();

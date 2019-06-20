@@ -23,6 +23,18 @@ if (ctx){
 	canvas.setAttribute("width", parseInt(getComputedStyle(canvas).width));
 	canvas.setAttribute("height", parseInt(getComputedStyle(canvas).height));
 
+	function destroyFigure(figure, playerCollection1, playerCollection2){
+		for (let i = 0; i < playerCollection1.length; ++i)
+			if (figure === playerCollection1[i]){
+				playerCollection1.splice(i, 1);
+				break;
+			}
+			else if (figure === playerCollection2[i]){
+				playerCollection2.splice(i, 1);
+				break;
+			}
+	}
+
 	function detectRook(){
 			if (this.coords.y > 0){
 				for (let i = this.coords.y - 1; i >= 0; --i){
@@ -287,10 +299,6 @@ if (ctx){
 			this.tile.figure = this;
 			draw();
 		}
-
-		this.destroy = function(coords, player1, player2){
-			this.force(coords);
-		}
 	}
 
 	function Pawn(width, height, source, coords, board, isEnemy){
@@ -478,7 +486,24 @@ if (ctx){
 	function King(width, height, source, coords, board, isEnemy){
 		Figure.call(this, width, height, source, coords, board, isEnemy);
 		this.detect = function(){
-			
+			const left = (this.coords.x - 1 >= 0)?-1:0,
+				top = (this.coords.y - 1 >= 0)?-1:0,
+				right = (this.coords.x + 1 < 8)?1:0, 
+				bottom = (this.coords.y + 1 < 8)?1:0;
+			for (let i = left; i < right + 1; ++i)
+				for (let j = top; j < bottom + 1; ++j)
+					if (board.tiles[this.coords.x + i][this.coords.y + j].status != "friend"){
+						const color = (board.tiles[this.coords.x + i][this.coords.y + j].status == "enemy" ? "rgba(200, 50, 50, 0.4)" : "rgba(50, 200, 50, 0.4)");
+						ctx.fillStyle = color;
+						ctx.fillRect(board.tiles[this.coords.x + i][this.coords.y + j].x,
+									 board.tiles[this.coords.x + i][this.coords.y + j].y,
+									 board.tiles[this.coords.x + i][this.coords.y + j].width,
+									 board.tiles[this.coords.x + i][this.coords.y + j].height);
+						if (board.tiles[this.coords.x + i][this.coords.y + j].status == "enemy")
+							board.killTargets.push({x: this.coords.x + i, y: this.coords.y + j})
+						else
+							board.targets.push({x: this.coords.x + i, y: this.coords.y + j})
+					}
 		}
 	}
 
