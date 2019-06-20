@@ -1,4 +1,4 @@
-const board = new Board(40, 40, 80, 80, colors), player = new Player(true, board), fig = [new Pawn(80, 80, "images/Red_pawn.svg", {x: 3, y: 3}, board, true)];
+const board = new Board(40, 40, 80, 80, colors), player = new Player(true, board), enemy = new Player(false, board);
 
 setTimeout(loadFunction, 0);
 
@@ -23,8 +23,8 @@ function loadFunction(){
 function draw(){
 	ctx.clearRect(0, 0, parseInt(getComputedStyle(canvas).width), parseInt(getComputedStyle(canvas).height));
 	board.draw();
-	fig[0].draw();
 	player.draw();
+	enemy.draw();
 }
 
 
@@ -47,12 +47,18 @@ canvas.addEventListener("click", function(ev){
 			for (let i = 0; i < board.targets.length; ++i){
 				if (board.targets[i].x == cursorCoords.x && board.targets[i].y == cursorCoords.y){
 					board.focus.force({x: cursorCoords.x, y: cursorCoords.y});
+					board.reverse();
+					player.draw();
+					enemy.draw();
 					break;
 				}
 			}
 			for (let i = 0; i < board.killTargets.length; ++i){
 				if (board.killTargets[i].x == cursorCoords.x && board.killTargets[i].y == cursorCoords.y){
 					board.focus.destroy({x: cursorCoords.x, y: cursorCoords.y});
+					board.reverse();
+					player.draw();
+					enemy.draw();
 					break;
 				}
 			}
@@ -65,24 +71,25 @@ canvas.addEventListener("click", function(ev){
 
 function Player(isGreen, currentBoard){
 	this.collection = [];
+
 	for (let i = 0; i < 8; ++i)
-		this.collection.push(new Pawn(80, 80, "images/" + (isGreen?"Green_pawn.svg":"Red_pawn.svg"), {x: i, y: 6}, board));
+		this.collection.push(new Pawn(80, 80, "images/" + (isGreen?"Green_pawn.svg":"Red_pawn.svg"), {x: i, y: isGreen?6:1}, board, !isGreen));
 
-	this.collection.push(new Rook(80, 80, "images/" + (isGreen?"Green_rook.svg":"Red_rook.svg"), {x: 0, y: 7}, board));
-	this.collection.push(new Rook(80, 80, "images/" + (isGreen?"Green_rook.svg":"Red_rook.svg"), {x: 7, y: 7}, board));
+		this.collection.push(new Rook(80, 80, "images/" + (isGreen?"Green_rook.svg":"Red_rook.svg"), {x: 0, y: isGreen?7:0}, board, !isGreen));
+		this.collection.push(new Rook(80, 80, "images/" + (isGreen?"Green_rook.svg":"Red_rook.svg"), {x: 7, y: isGreen?7:0}, board, !isGreen));
 
-	this.collection.push(new Knight(80, 80, "images/" + (isGreen?"Green_knight.svg":"Red_knight.svg"), {x: 1, y: 7}, board));
-	this.collection.push(new Knight(80, 80, "images/" + (isGreen?"Green_knight.svg":"Red_knight.svg"), {x: 6, y: 7}, board));
+		this.collection.push(new Knight(80, 80, "images/" + (isGreen?"Green_knight.svg":"Red_knight.svg"), {x: 1, y: isGreen?7:0}, board, !isGreen));
+		this.collection.push(new Knight(80, 80, "images/" + (isGreen?"Green_knight.svg":"Red_knight.svg"), {x: 6, y: isGreen?7:0}, board, !isGreen));
 
-	this.collection.push(new Bishop(80, 80, "images/" + (isGreen?"Green_bishop.svg":"Red_bishop.svg"), {x: 2, y: 7}, board));
-	this.collection.push(new Bishop(80, 80, "images/" + (isGreen?"Green_bishop.svg":"Red_bishop.svg"), {x: 5, y: 7}, board));
+		this.collection.push(new Bishop(80, 80, "images/" + (isGreen?"Green_bishop.svg":"Red_bishop.svg"), {x: 2, y: isGreen?7:0}, board, !isGreen));
+		this.collection.push(new Bishop(80, 80, "images/" + (isGreen?"Green_bishop.svg":"Red_bishop.svg"), {x: 5, y: isGreen?7:0}, board, !isGreen));
 
-	this.collection.push(new Queen(80, 80, "images/" + (isGreen?"Green_queen.svg":"Red_queen.svg"), {x: 4, y: 7}, board));
+		this.collection.push(new Queen(80, 80, "images/" + (isGreen?"Green_queen.svg":"Red_queen.svg"), {x: 3, y: isGreen?7:0}, board, !isGreen));
 
-	this.draw = function(){
-		for (let i = 0; i < this.collection.length; ++i)
-			this.collection[i].draw();
+		this.collection.push(new King(80, 80, "images/" + (isGreen?"Green_king.svg":"Red_king.svg"), {x: 4, y: isGreen?7:0}, board, !isGreen))
+
+		this.draw = function(){
+			for (let i = 0; i < this.collection.length; ++i)
+				this.collection[i].draw();
 	}
 }
-
-board.tiles[3][3].status = "enemy";

@@ -222,6 +222,32 @@ if (ctx){
 				for (let j = 0; j < 8; ++j)
 					this.tiles[i][j].draw();
 		}
+		this.reverse = function(){
+			let newTiles = [];
+			for (let i = 7; i >= 0; --i){
+				newTiles.push([]);
+				for (let j = 7; j >= 0; --j){
+					newTiles[7 - i].push({
+						x: 80 * (7 - i) + 40,
+						y: 80 * (7 - j) + 40,
+						width: board.tiles[i][j].width,
+						height: board.tiles[i][j].height,
+						figure: board.tiles[i][j].figure,
+						status: (board.tiles[i][j].status == "enemy") ? "friend" : (board.tiles[i][j].status == "friend") ? "enemy" : "empty",
+						draw: board.tiles[i][j].draw
+					});
+					if (newTiles[7 - i][7 - j].figure){
+						newTiles[7 - i][7 - j].figure.coords.x = 7 - newTiles[7 - i][7 - j].figure.coords.x;
+						newTiles[7 - i][7 - j].figure.coords.y = 7 - newTiles[7 - i][7 - j].figure.coords.y;
+						newTiles[7 - i][7 - j].figure.tile = newTiles[7 - i][7 - j];
+						newTiles[7 - i][7 - j].figure.status = (newTiles[7 - i][7 - j].figure.status == "enemy"?"friend":"enemy")
+					}
+				}
+			}
+			board.tiles = newTiles;
+			draw();
+			board.draw();
+		}
 	}
 
 	function Figure(width, height, source, coords, board, isEnemy){
@@ -260,16 +286,15 @@ if (ctx){
 			this.tile.status = this.status;
 			this.tile.figure = this;
 			draw();
-			this.draw();
 		}
 
-		this.destroy = function(coords){
+		this.destroy = function(coords, player1, player2){
 			this.force(coords);
 		}
 	}
 
-	function Pawn(width, height, source, coords, board){
-		Figure.call(this, width, height, source, coords, board);
+	function Pawn(width, height, source, coords, board, isEnemy){
+		Figure.call(this, width, height, source, coords, board, isEnemy);
 		this.detect = function(){
 			ctx.strokeStyle = "green";
 			ctx.fillStyle = "rgba(50, 200, 50, 0.4)"
@@ -313,13 +338,13 @@ if (ctx){
 		}
 	}
 
-	function Rook(width, height, source, coords, board){
-		Figure.call(this, width, height, source, coords, board);
+	function Rook(width, height, source, coords, board, isEnemy){
+		Figure.call(this, width, height, source, coords, board, isEnemy);
 		this.detect = detectRook;
 	}
 
-	function Knight(width, height, source, coords, board){
-		Figure.call(this, width, height, source, coords, board);
+	function Knight(width, height, source, coords, board, isEnemy){
+		Figure.call(this, width, height, source, coords, board, isEnemy);
 		this.detect = function(){
 			if (this.coords.y - 2 >= 0){
 				if (this.coords.x - 1 >= 0 && board.tiles[this.coords.x - 1][this.coords.y - 2].status != "friend"){
@@ -436,19 +461,27 @@ if (ctx){
 		}
 	};
 
-	function Bishop(width, height, source, coords, board){
-		Figure.call(this, width, height, source, coords, board);
+	function Bishop(width, height, source, coords, board, isEnemy){
+		Figure.call(this, width, height, source, coords, board, isEnemy);
 		this.detect = detectBishop;
 	}
 	
 
-	function Queen(width, height, source, coords, board){
-		Figure.call(this, width, height, source, coords, board);
+	function Queen(width, height, source, coords, board, isEnemy){
+		Figure.call(this, width, height, source, coords, board, isEnemy);
 		this.detect = function(){
 			detectRook.call(this);
 			detectBishop.call(this);
 		}
 	}
+
+	function King(width, height, source, coords, board, isEnemy){
+		Figure.call(this, width, height, source, coords, board, isEnemy);
+		this.detect = function(){
+			
+		}
+	}
+
 	function preloader(){
 		ctx.clearRect(0, 0, parseInt(getComputedStyle(canvas).width), parseInt(getComputedStyle(canvas).height));
 		ctx.font = "48px serif";
